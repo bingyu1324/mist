@@ -166,6 +166,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private Vector2 dragStart;
     private System.Random random = new System.Random();
     private const string AssetFolder = @"C:\Users\zyuh\Desktop\迷雾档案";
+    private const int MaxReserveCount = 8;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoStart()
@@ -687,7 +688,7 @@ public class MistDemoBootstrap : MonoBehaviour
         recruitStatsText = CreateText("Recruit Stats", card, "", 17, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
         Anchor(recruitStatsText.rectTransform, 0.1f, 0.23f, 0.9f, 0.48f, 0f, 0f, 0f, 0f);
 
-        Button rollButton = CreateButton("Roll Recruit", card, "刷新档案 $50", 18, new Color(0.24f, 0.15f, 0.1f, 1f));
+        Button rollButton = CreateButton("Roll Recruit", card, "刷新档案", 18, new Color(0.24f, 0.15f, 0.1f, 1f));
         Anchor(rollButton.GetComponent<RectTransform>(), 0.1f, 0.13f, 0.47f, 0.19f, 0f, 0f, 0f, 0f);
         rollButton.onClick.AddListener(RollRecruitCandidate);
 
@@ -1104,7 +1105,7 @@ public class MistDemoBootstrap : MonoBehaviour
         }
 
         ClearRosterSlots();
-        teamEditContentText.text = "正式队员\n\n\n\n\n\n候补人选\n拖动头像到另一个头像上，可交换正式队员、候补人员或调整顺序。";
+        teamEditContentText.text = "正式队员\n\n\n\n\n\n候补人选 " + reserve.Count + "/" + MaxReserveCount + "\n拖动头像到另一个头像上，可交换正式队员、候补人员或调整顺序。";
 
         for (int i = 0; i < party.Count; i++)
         {
@@ -1277,18 +1278,17 @@ public class MistDemoBootstrap : MonoBehaviour
             return;
         }
 
-        if (cash < 50)
+        if (reserve.Count >= MaxReserveCount)
         {
-            Toast("现金不足，无法支付招募费用。");
+            Toast("候补名单已满，最多可存储 " + MaxReserveCount + " 人。");
             return;
         }
 
-        cash -= 50;
         reserve.Add(recruitCandidate);
 
         RefreshPortraitSlots();
 
-        Toast("已录用 " + recruitCandidate.Name + "，加入候补。");
+        Toast("已录用 " + recruitCandidate.Name + "，加入候补 " + reserve.Count + "/" + MaxReserveCount + "。");
         recruitCandidate = null;
         UpdateHud();
         UpdateAgencyPanel("新调查员已加入候补名单。");
@@ -1357,7 +1357,7 @@ public class MistDemoBootstrap : MonoBehaviour
             "现金: $" + cash + "\n" +
             "负债: $" + debt + "\n" +
             "背包物品: " + inventory.Count + "\n" +
-            "候补人数: " + reserve.Count + "\n" +
+            "候补人数: " + reserve.Count + "/" + MaxReserveCount + "\n" +
             "当前专案: " + activeRunName + "\n" +
             "最近报告: " + message;
 
