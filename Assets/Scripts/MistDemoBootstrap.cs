@@ -146,6 +146,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private RectTransform recruitPanel;
     private RectTransform teamEditPanel;
     private RectTransform rosterDetailPanel;
+    private RectTransform shopPanel;
     private Text backpackContentText;
     private Text mapContentText;
     private Text agencyStatusText;
@@ -153,6 +154,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private Text recruitNameText;
     private Text recruitStatsText;
     private Text teamEditContentText;
+    private Text shopContentText;
     private Text rosterDetailText;
     private Image recruitPortraitImage;
     private Image rosterDetailPortrait;
@@ -201,6 +203,7 @@ public class MistDemoBootstrap : MonoBehaviour
         BuildData();
         BuildUi();
         MoveTo("gate");
+        ShowAgency("欢迎回到特情处。请整备队伍后开始调查。");
     }
 
     private void Update()
@@ -643,23 +646,60 @@ public class MistDemoBootstrap : MonoBehaviour
         startButton.onClick.AddListener(StartInvestigationFromAgency);
 
         Button recruitButton = CreateButton("Agency Recruit", agencyPanel, "招募调查员", 18, new Color(0.27f, 0.19f, 0.11f, 1f));
-        Anchor(recruitButton.GetComponent<RectTransform>(), 0.12f, 0.09f, 0.47f, 0.14f, 0f, 0f, 0f, 0f);
+        Anchor(recruitButton.GetComponent<RectTransform>(), 0.12f, 0.092f, 0.47f, 0.14f, 0f, 0f, 0f, 0f);
         recruitButton.onClick.AddListener(ShowRecruit);
 
         Button teamButton = CreateButton("Agency Team Edit", agencyPanel, "编辑队伍", 18, new Color(0.27f, 0.19f, 0.11f, 1f));
-        Anchor(teamButton.GetComponent<RectTransform>(), 0.53f, 0.09f, 0.88f, 0.14f, 0f, 0f, 0f, 0f);
+        Anchor(teamButton.GetComponent<RectTransform>(), 0.53f, 0.092f, 0.88f, 0.14f, 0f, 0f, 0f, 0f);
         teamButton.onClick.AddListener(ShowTeamEdit);
 
-        Button bagButton = CreateButton("Agency Bag", agencyPanel, "整理背包", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
-        Anchor(bagButton.GetComponent<RectTransform>(), 0.12f, 0.025f, 0.47f, 0.075f, 0f, 0f, 0f, 0f);
+        Button shopButton = CreateButton("Agency Shop", agencyPanel, "商店", 18, new Color(0.24f, 0.17f, 0.1f, 1f));
+        Anchor(shopButton.GetComponent<RectTransform>(), 0.12f, 0.035f, 0.32f, 0.08f, 0f, 0f, 0f, 0f);
+        shopButton.onClick.AddListener(ShowShop);
+
+        Button bagButton = CreateButton("Agency Bag", agencyPanel, "背包", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
+        Anchor(bagButton.GetComponent<RectTransform>(), 0.4f, 0.035f, 0.6f, 0.08f, 0f, 0f, 0f, 0f);
         bagButton.onClick.AddListener(ShowBackpack);
 
-        Button mapButton = CreateButton("Agency Map", agencyPanel, "查看地图", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
-        Anchor(mapButton.GetComponent<RectTransform>(), 0.53f, 0.025f, 0.88f, 0.075f, 0f, 0f, 0f, 0f);
+        Button mapButton = CreateButton("Agency Map", agencyPanel, "地图", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
+        Anchor(mapButton.GetComponent<RectTransform>(), 0.68f, 0.035f, 0.88f, 0.08f, 0f, 0f, 0f, 0f);
         mapButton.onClick.AddListener(ShowMap);
 
+        BuildShopPanel();
         BuildRecruitPanel();
         BuildTeamEditPanel();
+    }
+
+    private void BuildShopPanel()
+    {
+        shopPanel = CreatePanel("Shop Panel", root, new Color(0f, 0f, 0f, 0.65f));
+        Stretch(shopPanel);
+        RectTransform card = CreatePanel("Shop Card", shopPanel, new Color(0.78f, 0.69f, 0.5f, 1f));
+        Anchor(card, 0.08f, 0.13f, 0.92f, 0.86f, 0f, 0f, 0f, 0f);
+
+        Text title = CreateText("Shop Title", card, "特情处商店", 30, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(title.rectTransform, 0.07f, 0.89f, 0.93f, 0.97f, 0f, 0f, 0f, 0f);
+
+        shopContentText = CreateText("Shop Content", card, "", 17, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(shopContentText.rectTransform, 0.08f, 0.58f, 0.92f, 0.86f, 0f, 0f, 0f, 0f);
+
+        Button healButton = CreateButton("Shop Heal", card, "急救治疗 $30", 18, new Color(0.24f, 0.15f, 0.1f, 1f));
+        Anchor(healButton.GetComponent<RectTransform>(), 0.1f, 0.46f, 0.9f, 0.53f, 0f, 0f, 0f, 0f);
+        healButton.onClick.AddListener(BuyHeal);
+
+        Button sanButton = CreateButton("Shop San", card, "心理疏导 $40", 18, new Color(0.24f, 0.15f, 0.1f, 1f));
+        Anchor(sanButton.GetComponent<RectTransform>(), 0.1f, 0.36f, 0.9f, 0.43f, 0f, 0f, 0f, 0f);
+        sanButton.onClick.AddListener(BuySanCare);
+
+        Button insuranceButton = CreateButton("Shop Insurance", card, "购买保险单 $60", 18, new Color(0.24f, 0.15f, 0.1f, 1f));
+        Anchor(insuranceButton.GetComponent<RectTransform>(), 0.1f, 0.26f, 0.9f, 0.33f, 0f, 0f, 0f, 0f);
+        insuranceButton.onClick.AddListener(BuyInsurance);
+
+        Button close = CreateButton("Close Shop", card, "关闭", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
+        Anchor(close.GetComponent<RectTransform>(), 0.32f, 0.07f, 0.68f, 0.13f, 0f, 0f, 0f, 0f);
+        close.onClick.AddListener(HideShop);
+
+        shopPanel.gameObject.SetActive(false);
     }
 
     private void BuildTeamEditPanel()
@@ -1089,6 +1129,125 @@ public class MistDemoBootstrap : MonoBehaviour
         recruitPanel.gameObject.SetActive(true);
         recruitPanel.SetAsLastSibling();
         RollRecruitCandidate();
+    }
+
+    private void ShowShop()
+    {
+        if (shopPanel == null)
+        {
+            return;
+        }
+
+        sceneLocked = true;
+        shopPanel.gameObject.SetActive(true);
+        shopPanel.SetAsLastSibling();
+        RefreshShopPanel();
+    }
+
+    private void HideShop()
+    {
+        if (shopPanel != null)
+        {
+            shopPanel.gameObject.SetActive(false);
+        }
+        if (agencyPanel != null && agencyPanel.gameObject.activeSelf)
+        {
+            agencyPanel.SetAsLastSibling();
+        }
+        if ((eventPanel == null || !eventPanel.gameObject.activeSelf) &&
+            (agencyPanel == null || !agencyPanel.gameObject.activeSelf))
+        {
+            sceneLocked = false;
+        }
+    }
+
+    private void RefreshShopPanel()
+    {
+        if (shopContentText == null)
+        {
+            return;
+        }
+
+        shopContentText.text =
+            "现金: $" + cash + "\n" +
+            "负债: $" + debt + "\n" +
+            "保险单: " + CountInventoryItem("保险单") + "\n\n" +
+            "急救治疗: 全队 HP 恢复至上限。\n" +
+            "心理疏导: 全队 SAN 恢复 25 点。\n" +
+            "保险单: 撤离资源损失的占位道具。";
+    }
+
+    private void BuyHeal()
+    {
+        if (!SpendCash(30))
+        {
+            return;
+        }
+
+        for (int i = 0; i < party.Count; i++)
+        {
+            party[i].Hp = party[i].MaxHp;
+        }
+        Toast("全队 HP 已恢复。");
+        UpdateHud();
+        RefreshShopPanel();
+        UpdateAgencyPanel("完成急救治疗。");
+    }
+
+    private void BuySanCare()
+    {
+        if (!SpendCash(40))
+        {
+            return;
+        }
+
+        for (int i = 0; i < party.Count; i++)
+        {
+            party[i].San = Mathf.Min(party[i].MaxSan, party[i].San + 25);
+        }
+        Toast("全队 SAN 已恢复。");
+        UpdateHud();
+        RefreshShopPanel();
+        UpdateAgencyPanel("完成心理疏导。");
+    }
+
+    private void BuyInsurance()
+    {
+        if (!SpendCash(60))
+        {
+            return;
+        }
+
+        inventory.Add("保险单");
+        Toast("获得保险单。");
+        UpdateHud();
+        RefreshShopPanel();
+        UpdateAgencyPanel("购买保险单。");
+    }
+
+    private bool SpendCash(int amount)
+    {
+        if (cash < amount)
+        {
+            Toast("现金不足。");
+            return false;
+        }
+
+        cash -= amount;
+        return true;
+    }
+
+    private int CountInventoryItem(string itemName)
+    {
+        int count = 0;
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i] == itemName)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     private void HideRecruit()
