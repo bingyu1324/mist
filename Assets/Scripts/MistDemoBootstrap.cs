@@ -13,14 +13,16 @@ public class MistDemoBootstrap : MonoBehaviour
         Reserve
     }
 
-    private class RosterDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    private class RosterDragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
     {
         public MistDemoBootstrap Owner;
         public RosterZone Zone;
         public int Index;
+        private bool wasDragged;
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            wasDragged = true;
             if (Owner != null)
             {
                 Owner.BeginRosterDrag(this);
@@ -49,6 +51,15 @@ public class MistDemoBootstrap : MonoBehaviour
             {
                 Owner.DropRosterOn(this);
             }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (!wasDragged && Owner != null)
+            {
+                Owner.ShowRosterDetail(Zone, Index);
+            }
+            wasDragged = false;
         }
     }
 
@@ -134,6 +145,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private RectTransform mapPanel;
     private RectTransform recruitPanel;
     private RectTransform teamEditPanel;
+    private RectTransform rosterDetailPanel;
     private Text backpackContentText;
     private Text mapContentText;
     private Text agencyStatusText;
@@ -141,7 +153,9 @@ public class MistDemoBootstrap : MonoBehaviour
     private Text recruitNameText;
     private Text recruitStatsText;
     private Text teamEditContentText;
+    private Text rosterDetailText;
     private Image recruitPortraitImage;
+    private Image rosterDetailPortrait;
     private Image rosterDragGhost;
     private RosterDragItem activeRosterDrag;
 
@@ -664,7 +678,34 @@ public class MistDemoBootstrap : MonoBehaviour
         Anchor(close.GetComponent<RectTransform>(), 0.32f, 0.025f, 0.68f, 0.08f, 0f, 0f, 0f, 0f);
         close.onClick.AddListener(HideTeamEdit);
 
+        BuildRosterDetailPanel();
         teamEditPanel.gameObject.SetActive(false);
+    }
+
+    private void BuildRosterDetailPanel()
+    {
+        rosterDetailPanel = CreatePanel("Roster Detail Panel", root, new Color(0f, 0f, 0f, 0.68f));
+        Stretch(rosterDetailPanel);
+        RectTransform card = CreatePanel("Roster Detail Card", rosterDetailPanel, new Color(0.78f, 0.69f, 0.5f, 1f));
+        Anchor(card, 0.1f, 0.16f, 0.9f, 0.84f, 0f, 0f, 0f, 0f);
+
+        Text title = CreateText("Roster Detail Title", card, "调查员档案", 28, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(title.rectTransform, 0.08f, 0.9f, 0.92f, 0.97f, 0f, 0f, 0f, 0f);
+
+        Image portraitBack = CreateImage("Roster Detail Portrait Back", card, new Color(0.95f, 0.89f, 0.72f, 1f));
+        Anchor(portraitBack.rectTransform, 0.34f, 0.61f, 0.66f, 0.88f, 0f, 0f, 0f, 0f);
+        rosterDetailPortrait = CreateImage("Roster Detail Portrait", portraitBack.transform, Color.white);
+        rosterDetailPortrait.preserveAspect = true;
+        Stretch(rosterDetailPortrait.rectTransform);
+
+        rosterDetailText = CreateText("Roster Detail Text", card, "", 18, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(rosterDetailText.rectTransform, 0.1f, 0.18f, 0.9f, 0.58f, 0f, 0f, 0f, 0f);
+
+        Button close = CreateButton("Close Roster Detail", card, "关闭", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
+        Anchor(close.GetComponent<RectTransform>(), 0.32f, 0.07f, 0.68f, 0.13f, 0f, 0f, 0f, 0f);
+        close.onClick.AddListener(HideRosterDetail);
+
+        rosterDetailPanel.gameObject.SetActive(false);
     }
 
     private void BuildRecruitPanel()
@@ -1218,6 +1259,43 @@ public class MistDemoBootstrap : MonoBehaviour
             return null;
         }
         return list[index];
+    }
+
+    private void ShowRosterDetail(RosterZone zone, int index)
+    {
+        Investigator investigator = GetRosterInvestigator(zone, index);
+        if (investigator == null || rosterDetailPanel == null)
+        {
+            return;
+        }
+
+        rosterDetailPortrait.sprite = GetSprite(investigator.PortraitKey);
+        rosterDetailText.text =
+            investigator.Name + " / " + investigator.Job + "\n\n" +
+            "HP    " + investigator.Hp + "/" + investigator.MaxHp + "\n" +
+            "SAN   " + investigator.San + "%\n\n" +
+            "力量 STR    " + investigator.Str + "\n" +
+            "敏捷 DEX    " + investigator.Dex + "\n" +
+            "体质 CON    " + investigator.Con + "\n" +
+            "智力 INT    " + investigator.Int + "\n" +
+            "魅力 CHA    " + investigator.Cha + "\n" +
+            "幸运 LUCK   " + investigator.Luck + "\n\n" +
+            (zone == RosterZone.Party ? "状态: 正式队员" : "状态: 候补人员");
+
+        rosterDetailPanel.gameObject.SetActive(true);
+        rosterDetailPanel.SetAsLastSibling();
+    }
+
+    private void HideRosterDetail()
+    {
+        if (rosterDetailPanel != null)
+        {
+            rosterDetailPanel.gameObject.SetActive(false);
+        }
+        if (teamEditPanel != null && teamEditPanel.gameObject.activeSelf)
+        {
+            teamEditPanel.SetAsLastSibling();
+        }
     }
 
     private void SwapRoster(RosterZone fromZone, int fromIndex, RosterZone toZone, int toIndex)
