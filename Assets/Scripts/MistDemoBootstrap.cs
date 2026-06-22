@@ -181,7 +181,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private string activeEnemyName = "剥皮者";
     private Vector2 dragStart;
     private System.Random random = new System.Random();
-    private const string AssetFolder = @"C:\Users\zyuh\Desktop\迷雾档案";
+    private const string LocalAssetFallbackFolder = @"C:\Users\zyuh\Desktop\迷雾档案";
     private const int MaxReserveCount = 8;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -356,17 +356,17 @@ public class MistDemoBootstrap : MonoBehaviour
 
     private void LoadExternalSprites()
     {
-        sprites["ui_phone"] = LoadSprite(Path.Combine(AssetFolder, @"UI\电话.png"));
-        sprites["ui_bag"] = LoadSprite(Path.Combine(AssetFolder, @"UI\背包.png"));
-        sprites["ui_map"] = LoadSprite(Path.Combine(AssetFolder, @"UI\地图.png"));
-        sprites["ui_settings"] = LoadSprite(Path.Combine(AssetFolder, @"UI\设置.png"));
-        sprites["portrait_detective"] = LoadSprite(Path.Combine(AssetFolder, @"人物\侦探.png"));
-        sprites["portrait_scholar"] = LoadSprite(Path.Combine(AssetFolder, @"人物\学者.png"));
-        sprites["portrait_thief"] = LoadSprite(Path.Combine(AssetFolder, @"人物\小偷.png"));
-        sprites["portrait_explorer"] = LoadSprite(Path.Combine(AssetFolder, @"人物\探险家.png"));
-        sprites["portrait_rogue"] = LoadSprite(Path.Combine(AssetFolder, @"人物\流氓.png"));
-        sprites["portrait_police"] = LoadSprite(Path.Combine(AssetFolder, @"人物\警察.png"));
-        sprites["portrait_reporter"] = LoadSprite(Path.Combine(AssetFolder, @"人物\记者.png"));
+        sprites["ui_phone"] = LoadProjectSprite(@"UI\电话.png");
+        sprites["ui_bag"] = LoadProjectSprite(@"UI\背包.png");
+        sprites["ui_map"] = LoadProjectSprite(@"UI\地图.png");
+        sprites["ui_settings"] = LoadProjectSprite(@"UI\设置.png");
+        sprites["portrait_detective"] = LoadProjectSprite(@"人物\侦探.png");
+        sprites["portrait_scholar"] = LoadProjectSprite(@"人物\学者.png");
+        sprites["portrait_thief"] = LoadProjectSprite(@"人物\小偷.png");
+        sprites["portrait_explorer"] = LoadProjectSprite(@"人物\探险家.png");
+        sprites["portrait_rogue"] = LoadProjectSprite(@"人物\流氓.png");
+        sprites["portrait_police"] = LoadProjectSprite(@"人物\警察.png");
+        sprites["portrait_reporter"] = LoadProjectSprite(@"人物\记者.png");
         portraitKeys.Clear();
         portraitKeys.Add("portrait_detective");
         portraitKeys.Add("portrait_scholar");
@@ -375,12 +375,25 @@ public class MistDemoBootstrap : MonoBehaviour
         portraitKeys.Add("portrait_rogue");
         portraitKeys.Add("portrait_police");
         portraitKeys.Add("portrait_reporter");
-        sprites["scene_gate"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\树林入口.png"));
-        sprites["scene_path"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\林间小道.png"));
-        sprites["scene_cabin"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\猎人小屋.png"));
-        sprites["scene_bloodkin"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\被腐化的血亲.png"));
-        sprites["scene_rest"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\可以休整的空地.png"));
-        sprites["scene_ritual"] = LoadSprite(Path.Combine(AssetFolder, @"卡面\树林中废弃的五角星法阵.png"));
+        sprites["scene_gate"] = LoadProjectSprite(@"卡面\树林入口.png");
+        sprites["scene_path"] = LoadProjectSprite(@"卡面\林间小道.png");
+        sprites["scene_cabin"] = LoadProjectSprite(@"卡面\猎人小屋.png");
+        sprites["scene_bloodkin"] = LoadProjectSprite(@"卡面\被腐化的血亲.png");
+        sprites["scene_rest"] = LoadProjectSprite(@"卡面\可以休整的空地.png");
+        sprites["scene_ritual"] = LoadProjectSprite(@"卡面\树林中废弃的五角星法阵.png");
+    }
+
+    private Sprite LoadProjectSprite(string relativePath)
+    {
+        string projectPath = Path.Combine(Application.dataPath, "MistAssets");
+        projectPath = Path.Combine(projectPath, relativePath);
+        Sprite sprite = LoadSprite(projectPath);
+        if (sprite != null)
+        {
+            return sprite;
+        }
+
+        return LoadSprite(Path.Combine(LocalAssetFallbackFolder, relativePath));
     }
 
     private Sprite LoadSprite(string path)
