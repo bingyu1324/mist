@@ -156,6 +156,7 @@ public class MistDemoBootstrap : MonoBehaviour
     private Text teamEditContentText;
     private Text shopContentText;
     private Text rosterDetailText;
+    private RectTransform rosterDetailIconRoot;
     private Image recruitPortraitImage;
     private Image rosterDetailPortrait;
     private Image rosterDragGhost;
@@ -200,6 +201,7 @@ public class MistDemoBootstrap : MonoBehaviour
     {
         Application.targetFrameRate = 60;
         LoadExternalSprites();
+        LoadProfileSprites();
         BuildData();
         BuildUi();
         MoveTo("gate");
@@ -396,6 +398,50 @@ public class MistDemoBootstrap : MonoBehaviour
         return LoadSprite(Path.Combine(LocalAssetFallbackFolder, relativePath));
     }
 
+    private void LoadProfileSprites()
+    {
+        sprites["ui_phone"] = LoadProjectSprite(@"UI\电话.png");
+        sprites["ui_bag"] = LoadProjectSprite(@"UI\背包.png");
+        sprites["ui_map"] = LoadProjectSprite(@"UI\地图.png");
+        sprites["ui_settings"] = LoadProjectSprite(@"UI\设置.png");
+        sprites["ui_profile"] = LoadProjectSprite(@"UI\个人档案.png");
+
+        sprites["attr_hp"] = LoadProjectSprite(@"UI\基础属性\血量.png");
+        sprites["attr_san"] = LoadProjectSprite(@"UI\基础属性\san.png");
+        sprites["attr_str"] = LoadProjectSprite(@"UI\基础属性\力量.png");
+        sprites["attr_dex"] = LoadProjectSprite(@"UI\基础属性\敏捷.png");
+        sprites["attr_con"] = LoadProjectSprite(@"UI\基础属性\体质.png");
+        sprites["attr_edu"] = LoadProjectSprite(@"UI\基础属性\教育.png");
+        sprites["attr_will"] = LoadProjectSprite(@"UI\基础属性\意志.png");
+        sprites["attr_luck"] = LoadProjectSprite(@"UI\基础属性\幸运.png");
+
+        sprites["skill_detective_1"] = LoadProjectSprite(@"UI\技能\侦探\逻辑推演.png");
+        sprites["skill_detective_2"] = LoadProjectSprite(@"UI\技能\侦探\弱点透析.png");
+        sprites["skill_detective_3"] = LoadProjectSprite(@"UI\技能\侦探\孤注一掷.png");
+        sprites["skill_rogue_1"] = LoadProjectSprite(@"UI\技能\流氓\威吓.png");
+        sprites["skill_rogue_2"] = LoadProjectSprite(@"UI\技能\流氓\扒窃.png");
+        sprites["skill_rogue_3"] = LoadProjectSprite(@"UI\技能\流氓\金蝉脱壳.png");
+        sprites["skill_police_1"] = LoadProjectSprite(@"UI\技能\警察\团队领袖.png");
+        sprites["skill_police_2"] = LoadProjectSprite(@"UI\技能\警察\威望.png");
+        sprites["skill_police_3"] = LoadProjectSprite(@"UI\技能\警察\警棍伴身.png");
+        sprites["skill_reporter_1"] = LoadProjectSprite(@"UI\技能\记者\深度访谈.png");
+        sprites["skill_reporter_2"] = LoadProjectSprite(@"UI\技能\记者\社交达人.png");
+        sprites["skill_reporter_3"] = LoadProjectSprite(@"UI\技能\记者\舆论压制.png");
+
+        sprites["trait_good_1"] = LoadProjectSprite(@"UI\特长\正面特长\侦探直觉.png");
+        sprites["trait_good_2"] = LoadProjectSprite(@"UI\特长\正面特长\夜视.png");
+        sprites["trait_good_3"] = LoadProjectSprite(@"UI\特长\正面特长\急救执照.png");
+        sprites["trait_bad_1"] = LoadProjectSprite(@"UI\特长\负面特长\极度焦虑.png");
+        sprites["trait_bad_2"] = LoadProjectSprite(@"UI\特长\负面特长\路痴.png");
+
+        sprites["equip_handgun"] = LoadProjectSprite(@"UI\装备\手枪类.png");
+        sprites["equip_blade"] = LoadProjectSprite(@"UI\装备\刀类.png");
+        sprites["equip_book"] = LoadProjectSprite(@"UI\装备\书籍类.png");
+        sprites["equip_compass"] = LoadProjectSprite(@"UI\装备\指南针.png");
+        sprites["equip_bag"] = LoadProjectSprite(@"UI\装备\背包类.png");
+        sprites["equip_key"] = LoadProjectSprite(@"UI\装备\钥匙类.png");
+    }
+
     private Sprite LoadSprite(string path)
     {
         if (!File.Exists(path))
@@ -468,14 +514,6 @@ public class MistDemoBootstrap : MonoBehaviour
         Anchor(cashText.rectTransform, 0.62f, 0f, 0.82f, 1f, 0f, 0f, -20f, 0f);
         debtText = CreateText("Debt", topHud, "", 12, TextAnchor.MiddleRight, new Color(0.9f, 0.45f, 0.38f, 1f));
         Anchor(debtText.rectTransform, 0.78f, 0f, 0.96f, 1f, 0f, 0f, -20f, 0f);
-        Button extractButton = CreateButton("Telephone Extract", topHud, "", 24, new Color(0.32f, 0.1f, 0.09f, 1f));
-        Anchor(extractButton.GetComponent<RectTransform>(), 0.86f, 0.16f, 0.98f, 0.88f, 0f, 0f, 0f, 0f);
-        extractButton.onClick.AddListener(ShowExtraction);
-        phoneIcon = CreateImage("Phone Icon", extractButton.transform, Color.white);
-        phoneIcon.sprite = GetSprite("ui_phone");
-        phoneIcon.preserveAspect = true;
-        Anchor(phoneIcon.rectTransform, 0.12f, 0.12f, 0.88f, 0.88f, 0f, 0f, 0f, 0f);
-
         sceneCard = CreatePanel("Scene Card", root, new Color(0.73f, 0.66f, 0.5f, 1f));
         Anchor(sceneCard, 0.04f, 0.155f, 0.96f, 0.93f, 0f, 0f, 0f, 0f);
         Image sceneInner = CreateImage("Scene Inner", sceneCard, new Color(0.16f, 0.14f, 0.115f, 1f));
@@ -494,24 +532,37 @@ public class MistDemoBootstrap : MonoBehaviour
 
         RectTransform bottomHud = CreatePanel("Bottom HUD", root, new Color(0.1f, 0.09f, 0.08f, 0.97f));
         Anchor(bottomHud, 0f, 0f, 1f, 0.235f, 0f, 0f, 0f, 0f);
-        Button backpackButton = CreateButton("Backpack Button", bottomHud, "", 12, new Color(0.18f, 0.14f, 0.1f, 0.1f));
-        Anchor(backpackButton.GetComponent<RectTransform>(), 0.72f, 0.04f, 0.91f, 0.28f, 0f, 0f, 0f, 0f);
-        backpackButton.onClick.AddListener(ShowBackpack);
-        backpackIcon = CreateImage("Backpack Icon", backpackButton.transform, Color.white);
-        backpackIcon.sprite = GetSprite("ui_bag");
-        backpackIcon.preserveAspect = true;
-        Stretch(backpackIcon.rectTransform);
         Button mapButton = CreateButton("Map Button", bottomHud, "", 12, new Color(0.18f, 0.14f, 0.1f, 0.1f));
-        Anchor(mapButton.GetComponent<RectTransform>(), 0.09f, 0.04f, 0.28f, 0.28f, 0f, 0f, 0f, 0f);
+        Anchor(mapButton.GetComponent<RectTransform>(), 0.05f, 0.035f, 0.18f, 0.27f, 0f, 0f, 0f, 0f);
         mapButton.onClick.AddListener(ShowMap);
         mapIcon = CreateImage("Map Icon", mapButton.transform, Color.white);
         mapIcon.sprite = GetSprite("ui_map");
         mapIcon.preserveAspect = true;
         Stretch(mapIcon.rectTransform);
-        settingsIcon = CreateImage("Settings Icon", topHud, Color.white);
+
+        Button phoneButton = CreateButton("Phone Button", bottomHud, "", 12, new Color(0.18f, 0.14f, 0.1f, 0.1f));
+        Anchor(phoneButton.GetComponent<RectTransform>(), 0.31f, 0.035f, 0.44f, 0.27f, 0f, 0f, 0f, 0f);
+        phoneButton.onClick.AddListener(ShowExtraction);
+        phoneIcon = CreateImage("Phone Icon", phoneButton.transform, Color.white);
+        phoneIcon.sprite = GetSprite("ui_phone");
+        phoneIcon.preserveAspect = true;
+        Stretch(phoneIcon.rectTransform);
+
+        Button settingsButton = CreateButton("Settings Button", bottomHud, "", 12, new Color(0.18f, 0.14f, 0.1f, 0.1f));
+        Anchor(settingsButton.GetComponent<RectTransform>(), 0.57f, 0.035f, 0.7f, 0.27f, 0f, 0f, 0f, 0f);
+        settingsButton.onClick.AddListener(ShowSettings);
+        settingsIcon = CreateImage("Settings Icon", settingsButton.transform, Color.white);
         settingsIcon.sprite = GetSprite("ui_settings");
         settingsIcon.preserveAspect = true;
-        Anchor(settingsIcon.rectTransform, 0.01f, 0.2f, 0.08f, 0.8f, 0f, 0f, 0f, 0f);
+        Stretch(settingsIcon.rectTransform);
+
+        Button backpackButton = CreateButton("Backpack Button", bottomHud, "", 12, new Color(0.18f, 0.14f, 0.1f, 0.1f));
+        Anchor(backpackButton.GetComponent<RectTransform>(), 0.82f, 0.035f, 0.95f, 0.27f, 0f, 0f, 0f, 0f);
+        backpackButton.onClick.AddListener(ShowBackpack);
+        backpackIcon = CreateImage("Backpack Icon", backpackButton.transform, Color.white);
+        backpackIcon.sprite = GetSprite("ui_bag");
+        backpackIcon.preserveAspect = true;
+        Stretch(backpackIcon.rectTransform);
         portraitImages = new Image[3];
         hpFillRects = new RectTransform[3];
         sanFillRects = new RectTransform[3];
@@ -555,7 +606,7 @@ public class MistDemoBootstrap : MonoBehaviour
         }
         RefreshPortraitSlots();
         partyText = CreateText("Party", bottomHud, "", 13, TextAnchor.MiddleCenter, new Color(0.95f, 0.88f, 0.7f, 1f));
-        Anchor(partyText.rectTransform, 0.3f, 0.04f, 0.7f, 0.26f, 0f, 0f, 0f, 0f);
+        Anchor(partyText.rectTransform, 0.26f, 0.25f, 0.74f, 0.32f, 0f, 0f, 0f, 0f);
 
         eventPanel = CreatePanel("Event Layer", root, new Color(0f, 0f, 0f, 0.58f));
         Stretch(eventPanel);
@@ -746,13 +797,16 @@ public class MistDemoBootstrap : MonoBehaviour
         Anchor(title.rectTransform, 0.08f, 0.9f, 0.92f, 0.97f, 0f, 0f, 0f, 0f);
 
         Image portraitBack = CreateImage("Roster Detail Portrait Back", card, new Color(0.95f, 0.89f, 0.72f, 1f));
-        Anchor(portraitBack.rectTransform, 0.34f, 0.61f, 0.66f, 0.88f, 0f, 0f, 0f, 0f);
+        Anchor(portraitBack.rectTransform, 0.08f, 0.67f, 0.34f, 0.88f, 0f, 0f, 0f, 0f);
         rosterDetailPortrait = CreateImage("Roster Detail Portrait", portraitBack.transform, Color.white);
         rosterDetailPortrait.preserveAspect = true;
         Stretch(rosterDetailPortrait.rectTransform);
 
-        rosterDetailText = CreateText("Roster Detail Text", card, "", 18, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
-        Anchor(rosterDetailText.rectTransform, 0.1f, 0.18f, 0.9f, 0.58f, 0f, 0f, 0f, 0f);
+        rosterDetailText = CreateText("Roster Detail Text", card, "", 16, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(rosterDetailText.rectTransform, 0.39f, 0.67f, 0.92f, 0.88f, 0f, 0f, 0f, 0f);
+
+        rosterDetailIconRoot = CreatePanel("Roster Detail Icon Root", card, new Color(0.18f, 0.13f, 0.08f, 0.08f));
+        Anchor(rosterDetailIconRoot, 0.08f, 0.16f, 0.92f, 0.64f, 0f, 0f, 0f, 0f);
 
         Button close = CreateButton("Close Roster Detail", card, "关闭", 18, new Color(0.2f, 0.16f, 0.12f, 1f));
         Anchor(close.GetComponent<RectTransform>(), 0.32f, 0.07f, 0.68f, 0.13f, 0f, 0f, 0f, 0f);
@@ -1131,6 +1185,11 @@ public class MistDemoBootstrap : MonoBehaviour
         mapContentText.text = BuildMapText();
     }
 
+    private void ShowSettings()
+    {
+        Toast("设置功能将在后续版本开放。");
+    }
+
     private void ShowRecruit()
     {
         if (recruitPanel == null)
@@ -1445,14 +1504,9 @@ public class MistDemoBootstrap : MonoBehaviour
         rosterDetailText.text =
             investigator.Name + " / " + investigator.Job + "\n\n" +
             "HP    " + investigator.Hp + "/" + investigator.MaxHp + "\n" +
-            "SAN   " + investigator.San + "%\n\n" +
-            "力量 STR    " + investigator.Str + "\n" +
-            "敏捷 DEX    " + investigator.Dex + "\n" +
-            "体质 CON    " + investigator.Con + "\n" +
-            "智力 INT    " + investigator.Int + "\n" +
-            "魅力 CHA    " + investigator.Cha + "\n" +
-            "幸运 LUCK   " + investigator.Luck + "\n\n" +
+            "SAN   " + investigator.San + "%\n" +
             (zone == RosterZone.Party ? "状态: 正式队员" : "状态: 候补人员");
+        BuildRosterDetailIcons(investigator);
 
         rosterDetailPanel.gameObject.SetActive(true);
         rosterDetailPanel.SetAsLastSibling();
@@ -1468,6 +1522,108 @@ public class MistDemoBootstrap : MonoBehaviour
         {
             teamEditPanel.SetAsLastSibling();
         }
+    }
+
+    private void BuildRosterDetailIcons(Investigator investigator)
+    {
+        if (rosterDetailIconRoot == null)
+        {
+            return;
+        }
+
+        for (int i = rosterDetailIconRoot.childCount - 1; i >= 0; i--)
+        {
+            Destroy(rosterDetailIconRoot.GetChild(i).gameObject);
+        }
+
+        AddDetailSection("基础属性", 0.76f);
+        AddDetailIcon("attr_hp", "血量\n" + investigator.Hp + "/" + investigator.MaxHp, 0, 0.58f);
+        AddDetailIcon("attr_san", "SAN\n" + investigator.San + "%", 1, 0.58f);
+        AddDetailIcon("attr_str", "力量\n" + investigator.Str, 2, 0.58f);
+        AddDetailIcon("attr_dex", "敏捷\n" + investigator.Dex, 3, 0.58f);
+        AddDetailIcon("attr_con", "体质\n" + investigator.Con, 4, 0.58f);
+        AddDetailIcon("attr_edu", "智力\n" + investigator.Int, 5, 0.58f);
+        AddDetailIcon("attr_will", "魅力\n" + investigator.Cha, 6, 0.58f);
+        AddDetailIcon("attr_luck", "幸运\n" + investigator.Luck, 7, 0.58f);
+
+        AddDetailSection("技能", 0.47f);
+        string[] skillKeys = GetSkillIconKeys(investigator.Job);
+        string[] skillNames = GetSkillNames(investigator.Job);
+        for (int i = 0; i < skillKeys.Length; i++)
+        {
+            AddDetailIcon(skillKeys[i], skillNames[i], i, 0.31f);
+        }
+
+        AddDetailSection("特长", 0.24f);
+        AddDetailIcon("trait_good_1", "侦探直觉", 0, 0.08f);
+        AddDetailIcon(investigator.San < 55 ? "trait_bad_1" : "trait_good_2", investigator.San < 55 ? "极度焦虑" : "夜视", 1, 0.08f);
+
+        AddDetailSection("装备", 0.24f, 0.5f);
+        string[] equipKeys = GetEquipmentIconKeys(investigator.Job);
+        string[] equipNames = GetEquipmentNames(investigator.Job);
+        for (int i = 0; i < equipKeys.Length; i++)
+        {
+            AddDetailIcon(equipKeys[i], equipNames[i], i + 4, 0.08f);
+        }
+    }
+
+    private void AddDetailSection(string title, float y)
+    {
+        AddDetailSection(title, y, 0f);
+    }
+
+    private void AddDetailSection(string title, float y, float x)
+    {
+        Text label = CreateText("Detail Section " + title, rosterDetailIconRoot, title, 14, TextAnchor.MiddleLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(label.rectTransform, x, y, x + 0.46f, y + 0.08f, 0f, 0f, 0f, 0f);
+    }
+
+    private void AddDetailIcon(string spriteKey, string labelText, int index, float y)
+    {
+        float cellWidth = 0.115f;
+        float x = 0.01f + index * 0.122f;
+        RectTransform cell = CreatePanel("Detail Icon " + spriteKey, rosterDetailIconRoot, new Color(0f, 0f, 0f, 0f));
+        Anchor(cell, x, y, x + cellWidth, y + 0.16f, 0f, 0f, 0f, 0f);
+
+        Image icon = CreateImage("Icon", cell, Color.white);
+        icon.sprite = GetSprite(spriteKey);
+        icon.preserveAspect = true;
+        Anchor(icon.rectTransform, 0.18f, 0.42f, 0.82f, 1f, 0f, 0f, 0f, 0f);
+
+        Text label = CreateText("Label", cell, labelText, 10, TextAnchor.UpperCenter, new Color(0.12f, 0.08f, 0.04f, 1f));
+        Anchor(label.rectTransform, 0f, 0f, 1f, 0.42f, 0f, 0f, 0f, 0f);
+    }
+
+    private string[] GetSkillIconKeys(string job)
+    {
+        if (job == "警察") return new string[] { "skill_police_1", "skill_police_2", "skill_police_3" };
+        if (job == "记者") return new string[] { "skill_reporter_1", "skill_reporter_2", "skill_reporter_3" };
+        if (job == "打手" || job == "流氓" || job == "小偷") return new string[] { "skill_rogue_1", "skill_rogue_2", "skill_rogue_3" };
+        return new string[] { "skill_detective_1", "skill_detective_2", "skill_detective_3" };
+    }
+
+    private string[] GetSkillNames(string job)
+    {
+        if (job == "警察") return new string[] { "团队领袖", "威望", "警棍伴身" };
+        if (job == "记者") return new string[] { "深度访谈", "社交达人", "舆论压制" };
+        if (job == "打手" || job == "流氓" || job == "小偷") return new string[] { "威吓", "扒窃", "金蝉脱壳" };
+        return new string[] { "逻辑推演", "弱点透析", "孤注一掷" };
+    }
+
+    private string[] GetEquipmentIconKeys(string job)
+    {
+        if (job == "警察") return new string[] { "equip_handgun", "equip_key", "equip_compass" };
+        if (job == "学者") return new string[] { "equip_book", "equip_compass", "equip_bag" };
+        if (job == "打手" || job == "流氓" || job == "小偷") return new string[] { "equip_blade", "equip_bag", "equip_key" };
+        return new string[] { "equip_handgun", "equip_book", "equip_compass" };
+    }
+
+    private string[] GetEquipmentNames(string job)
+    {
+        if (job == "警察") return new string[] { "手枪", "钥匙", "指南针" };
+        if (job == "学者") return new string[] { "书籍", "指南针", "背包" };
+        if (job == "打手" || job == "流氓" || job == "小偷") return new string[] { "刀具", "背包", "钥匙" };
+        return new string[] { "手枪", "书籍", "指南针" };
     }
 
     private void SwapRoster(RosterZone fromZone, int fromIndex, RosterZone toZone, int toIndex)
