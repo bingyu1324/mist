@@ -791,6 +791,9 @@ public class MistDemoBootstrap : MonoBehaviour
         rosterDetailPanel = CreatePanel("Roster Detail Panel", root, new Color(0f, 0f, 0f, 0.68f));
         Stretch(rosterDetailPanel);
         RectTransform card = CreatePanel("Roster Detail Card", rosterDetailPanel, new Color(0.78f, 0.69f, 0.5f, 1f));
+        Image cardImage = card.GetComponent<Image>();
+        cardImage.sprite = GetSprite("ui_profile");
+        cardImage.preserveAspect = false;
         Anchor(card, 0.1f, 0.16f, 0.9f, 0.84f, 0f, 0f, 0f, 0f);
 
         Text title = CreateText("Roster Detail Title", card, "调查员档案", 28, TextAnchor.UpperLeft, new Color(0.12f, 0.08f, 0.04f, 1f));
